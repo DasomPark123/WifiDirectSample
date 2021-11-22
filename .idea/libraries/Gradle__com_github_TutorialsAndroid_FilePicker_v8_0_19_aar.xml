@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.TutorialsAndroid:FilePicker:v8.0.19@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/073607ecfece101d3d8c61d4d3ec4190/jetified-FilePicker-v8.0.19/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/073607ecfece101d3d8c61d4d3ec4190/jetified-FilePicker-v8.0.19/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/073607ecfece101d3d8c61d4d3ec4190/jetified-FilePicker-v8.0.19/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.TutorialsAndroid/FilePicker/v8.0.19/ba30d03e3760e052fdaafcad5b93146d98597399/FilePicker-v8.0.19-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
