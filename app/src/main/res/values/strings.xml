@@ -8,5 +8,22 @@
     <string name="disconnect">Disconnect</string>
     <string name="sent_data">Sent data</string>
     <string name="received_Data">Received data</string>
+    <string name="select_file">Select file</string>
+    <string name="point_qr_to_download_file">Please point a QR Code to download a file.</string>
+
+    <!--Wi-Fi Direct-->
+    <string name="wifi_direct">Wifi Direct</string>
+    <string name="ready_to_connect_wifi">Ready to connect Wi-Fi…</string>
+    <string name="connecting_to_wifi">Connecting to Wi-Fi…</string>
+    <string name="connection_success_to_wifi">Connection success to Wi-Fi…</string>
+    <string name="connection_failed_to_wifi">Connection failed to Wi-Fi…</string>
+    <string name="ready_to_connect_server">Ready to connect server…</string>
+    <string name="connecting_to_server">Connecting to server…</string>
+    <string name="connection_success_to_server">Connection success to server</string>
+    <string name="connection_failed_to_server">Connection failed to server</string>
+    <string name="ready_to_download">Ready to download</string>
+    <string name="download_proceeding">Downloading…\n</string>
+    <string name="download_success">Download success</string>
+    <string name="download_failed">Download failed</string>
 
 </resources>

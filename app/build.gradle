@@ -2,9 +2,26 @@ plugins {
     id 'com.android.application'
 }
 
+ext {
+    buildDate = (new Date()).format('ddHHmm')
+    //release_path = '../../apk'
+    release_path = './release'
+}
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
+
+    signingConfigs {
+        config {
+            keyAlias 'platform'
+            keyPassword 'pointmobile_omap3pm'
+            //storeFile file('../../../KeyStore/platform.jks')
+            storeFile file('libs/platform.jks')
+            //storeFile file('../../../../skeleton/product/common/security/pm500/platform.jks')
+            storePassword 'pointmobile_omap3pm'
+        }
+    }
 
     defaultConfig {
         applicationId "ex.dev.tool.wifidirectsample"
@@ -20,8 +37,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            signingConfig signingConfigs.config
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -33,7 +55,86 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'androidx.core:core:1.6.0'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'com.google.zxing:core:3.4.1'
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+    implementation 'com.scottyab:aescrypt:0.0.1'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.2'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation 'com.github.TutorialsAndroid:FilePicker:v8.0.19'
+    compileOnly files('libs/framework.a10.jar')
+    //compileOnly files('libs/pmtool_sysclasses.jar')
+    //compileOnly files('libs/device.sdk.jar')
+    //compileOnly files('libs/bs-implclass.jar')
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs.add("-Xbootclasspath/p:app/libs/framework.a10.jar")
+        }
+    }
+
+    preBuild {
+        doLast {
+            def imlFile = file( ".." + File.separator + ".idea" + File.separator
+                    + "modules" + File.separator + "app" + File.separator
+                    + rootProject.name + ".app.iml")
+            println 'Changing the library priority order: ' + imlFile.getPath()
+            try {
+                def parsedXml = (new XmlParser()).parse(imlFile)
+                def jdkNode = parsedXml.component[1].orderEntry.find { it.'@type' == 'jdk' }
+                parsedXml.component[1].remove(jdkNode)
+                def sdkString = "Android API " + android.compileSdkVersion.substring("android-".length()) + " Platform"
+                println 'Android sdk version: ' + sdkString
+                new Node(parsedXml.component[1], 'orderEntry', ['type': 'jdk', 'jdkName': sdkString, 'jdkType': 'Android SDK'])
+                groovy.xml.XmlUtil.serialize(parsedXml, new FileOutputStream(imlFile))
+            } catch (FileNotFoundException e) {
+                // nop, iml not found
+                println "no iml found"
+            }
+        }
+    }
+}
+task releaseDeploy {
+    finalizedBy {
+        //def name_prefix = "${rootProject.name}_${AppVersionName}_${buildDate}"
+        //def name_prefix = "${rootProject.name}_${AppVersionName}_Temperature"
+        def name_prefix = "${rootProject.name}_${AppVersionName}"
+        //def name_prefix = "${rootProject.name}"
+        def mapping_suffix = "_mapping.zip"
+        def mapping_name = "${name_prefix}${mapping_suffix}"
+        def mapping_dest = "build/distributions/${mapping_name}"
+        def mapping_from = "build/outputs/mapping/release"
+
+        def release_apk = "build/outputs/apk/release"
+
+        // APK 배포
+        task(deployApk, type: Copy) {
+            from "${release_apk}"
+            into "${release_path}"
+            rename('.*.apk', "${name_prefix}.apk")
+            include('**/*release.apk')
+        }
+
+//        // Debug용 Mapping 파일 압축
+//        task(mappingZip, type: Zip) {
+//            from "${mapping_from}"
+//            archiveName "${mapping_name}"
+//        }.execute()
+//
+//        // Mapping 파일 배포
+//        task(deployMapping, type: Copy) {
+//            from "${mapping_dest}"
+//            into "${release_path}"
+//            include("*${mapping_suffix}")
+//        }.execute()
+    }
+}
+
+task releaseBuild(dependsOn: ['assembleRelease']) {
+}
+
+task release(dependsOn: ['clean', 'releaseBuild', 'releaseDeploy']) {
+    releaseBuild.mustRunAfter clean
+    releaseDeploy.mustRunAfter releaseBuild
 }
